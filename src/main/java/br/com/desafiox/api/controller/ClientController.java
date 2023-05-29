@@ -18,26 +18,22 @@ import org.springframework.web.bind.annotation.*;
 public class ClientController {
 
     private final ClientService clientService;
-    private final IBGEService ibgeService;
     private final ClientRepository clientRepository;
+    private final IBGEService ibgeService;
 
     @Autowired
-    public ClientController(ClientService clientService, IBGEService ibgeService, ClientRepository clientRepository) {
+    public ClientController(ClientService clientService,IBGEService ibgeService,  ClientRepository clientRepository) {
         this.clientService = clientService;
-        this.ibgeService = ibgeService;
         this.clientRepository = clientRepository;
-    }
-
-    @GetMapping("/states")
-    public State[] getStates() {
-        return ibgeService.getStates();
+        this.ibgeService = ibgeService;
     }
 
     @PostMapping
     public ResponseEntity<Client> createClient(@RequestBody Client client) {
+        //Verifica se o usuário com o cnpj já foi cadastrado (validação extra)
         if(getClientById(client.getCnpj()) == null) {
             for(State s : ibgeService.getStates()) {
-                if(client.getEstado().equals(s.getSigla())) {
+                if(client.getEstado().equals(s.getId())) {
                     return ResponseEntity.ok(clientService.createClient(client));
                 }
             }
@@ -49,9 +45,11 @@ public class ClientController {
     @GetMapping
     public Page<Client> getClients(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "nome") String sortColumn
+            @RequestParam(defaultValue = "nome") String sortColumn,
+            @RequestParam(defaultValue = "asc") String sortOrder
     ) {
-        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(sortColumn));
+        Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(direction, sortColumn));
         return clientRepository.findAll(pageRequest);
     }
 

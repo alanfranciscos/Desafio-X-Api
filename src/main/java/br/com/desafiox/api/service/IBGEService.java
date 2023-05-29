@@ -15,5 +15,14 @@ public class IBGEService {
         ResponseEntity<State[]> response = restTemplate.getForEntity(IBGE_API_URL, State[].class);
         return response.getBody();
     }
+
+    public String getEstadoMetadados(String id) {
+        String url = "https://servicodados.ibge.gov.br/api/v3/malhas/estados/" + id + "/metadados";
+
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(url, String.class);
+
+        return response;
+    }
 }
 

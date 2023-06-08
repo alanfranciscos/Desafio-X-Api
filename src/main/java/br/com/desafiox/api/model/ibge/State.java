@@ -1,4 +1,4 @@
-package br.com.desafiox.api.model;
+package br.com.desafiox.api.model.ibge;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

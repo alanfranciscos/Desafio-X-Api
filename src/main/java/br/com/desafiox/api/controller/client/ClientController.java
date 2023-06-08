@@ -1,10 +1,11 @@
-package br.com.desafiox.api.controller;
+package br.com.desafiox.api.controller.client;
 
-import br.com.desafiox.api.model.Client;
-import br.com.desafiox.api.model.State;
-import br.com.desafiox.api.repository.ClientRepository;
-import br.com.desafiox.api.service.ClientService;
-import br.com.desafiox.api.service.IBGEService;
+import br.com.desafiox.api.model.client.Client;
+import br.com.desafiox.api.model.ibge.State;
+import br.com.desafiox.api.repository.client.ClientRepository;
+import br.com.desafiox.api.repository.sale.SalesRepository;
+import br.com.desafiox.api.service.client.ClientService;
+import br.com.desafiox.api.service.ibge.IBGEService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,18 +13,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
 
     private final ClientService clientService;
+    private final SalesRepository salesRepository;
     private final ClientRepository clientRepository;
     private final IBGEService ibgeService;
 
     @Autowired
-    public ClientController(ClientService clientService,IBGEService ibgeService,  ClientRepository clientRepository) {
+    public ClientController(ClientService clientService, SalesRepository salesRepository, IBGEService ibgeService, ClientRepository clientRepository) {
         this.clientService = clientService;
+        this.salesRepository = salesRepository;
         this.clientRepository = clientRepository;
         this.ibgeService = ibgeService;
     }
@@ -31,9 +36,9 @@ public class ClientController {
     @PostMapping
     public ResponseEntity<Client> createClient(@RequestBody Client client) {
         //Verifica se o usuário com o cnpj já foi cadastrado (validação extra)
-        if(getClientById(client.getCnpj()) == null) {
-            for(State s : ibgeService.getStates()) {
-                if(client.getEstado().equals(s.getId())) {
+        if (getClientById(client.getCnpj()) == null) {
+            for (State s : ibgeService.getStates()) {
+                if (client.getEstado().equals(s.getId())) {
                     return ResponseEntity.ok(clientService.createClient(client));
                 }
             }
@@ -55,17 +60,35 @@ public class ClientController {
 
     @GetMapping("/{id}")
     public Client getClientById(@PathVariable String id) {
-        return clientService.getClientById(id);
+        String formatedId = id.replaceAll(
+                "^(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})$",
+                "$1.$2.$3/$4-$5"
+        );
+        return clientService.getClientById(formatedId);
     }
 
     @PutMapping("/{id}")
-    public Client updateClient(@PathVariable Long id, @RequestBody Client client) {
-        return clientService.updateClient(id, client);
+    public Client updateClient(@PathVariable String id, @RequestBody Client client) {
+        String formatedId = id.replaceAll(
+                "^(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})$",
+                "$1.$2.$3/$4-$5"
+        );
+        return clientService.updateClient(formatedId, client);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteClient(@PathVariable Long id) {
-        clientService.deleteClient(id);
+    @Transactional
+    public ResponseEntity<Client> deleteClient(@PathVariable String id) {
+        if (getClientById(id) != null) {
+            String formatedId = id.replaceAll(
+                    "^(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})$",
+                    "$1.$2.$3/$4-$5"
+            );
+            salesRepository.deleteAllSalesOfAnClient(formatedId);
+            clientService.deleteClient(formatedId);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 }
 

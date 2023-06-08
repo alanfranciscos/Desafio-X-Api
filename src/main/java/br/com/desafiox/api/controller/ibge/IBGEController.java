@@ -1,7 +1,7 @@
-package br.com.desafiox.api.controller;
+package br.com.desafiox.api.controller.ibge;
 
-import br.com.desafiox.api.model.State;
-import br.com.desafiox.api.service.IBGEService;
+import br.com.desafiox.api.model.ibge.State;
+import br.com.desafiox.api.service.ibge.IBGEService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

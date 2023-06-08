@@ -7,5 +7,4 @@ CREATE TABLE clientes (
     telefone VARCHAR(20) NOT NULL,
     uf VARCHAR(2) NOT NULL,
     localizacao GEOGRAPHY(POINT, 4326) NOT NULL
-
 );

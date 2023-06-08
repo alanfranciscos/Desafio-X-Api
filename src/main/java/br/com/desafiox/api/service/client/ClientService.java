@@ -1,11 +1,12 @@
-package br.com.desafiox.api.service;
+package br.com.desafiox.api.service.client;
 
-import br.com.desafiox.api.model.Client;
-import br.com.desafiox.api.repository.ClientRepository;
-
+import br.com.desafiox.api.model.client.Client;
+import br.com.desafiox.api.repository.client.ClientRepository;
+import br.com.desafiox.api.service.ibge.IBGEService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -15,7 +16,7 @@ public class ClientService {
     private final IBGEService ibgeService;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository,  IBGEService ibgeService) {
+    public ClientService(ClientRepository clientRepository, IBGEService ibgeService) {
         this.clientRepository = clientRepository;
         this.ibgeService = ibgeService;
     }
@@ -32,8 +33,8 @@ public class ClientService {
         return clientRepository.findByCnpj(id);
     }
 
-    public Client updateClient(Long id, Client client) {
-        Client existingClient = clientRepository.findById(id).orElse(null);
+    public Client updateClient(String id, Client client) {
+        Client existingClient = clientRepository.findByCnpj(id);
         if (existingClient != null) {
             existingClient.setNome(client.getNome());
             existingClient.setCnpj(client.getCnpj());
@@ -46,7 +47,8 @@ public class ClientService {
         return null;
     }
 
-    public void deleteClient(Long id) {
-        clientRepository.deleteById(id);
+    @Transactional
+    public void deleteClient(String id) {
+        clientRepository.deleteClientById(id);
     }
 }

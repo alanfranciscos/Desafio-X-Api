@@ -1,6 +1,6 @@
-package br.com.desafiox.api.service;
+package br.com.desafiox.api.service.ibge;
 
-import br.com.desafiox.api.model.State;
+import br.com.desafiox.api.model.ibge.State;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

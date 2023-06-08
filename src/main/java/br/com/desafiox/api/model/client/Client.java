@@ -1,11 +1,14 @@
-package br.com.desafiox.api.model;
-
-import javax.persistence.*;
+package br.com.desafiox.api.model.client;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.geo.Point;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Data
 @AllArgsConstructor

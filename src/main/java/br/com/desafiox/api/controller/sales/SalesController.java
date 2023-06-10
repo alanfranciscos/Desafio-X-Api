@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -25,16 +26,20 @@ public class SalesController {
 
     @GetMapping
     public Page<Sale> getSale(@RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "cliente") String sortColumn,
+                              @RequestParam(defaultValue = "id") String sortColumn,
                               @RequestParam(defaultValue = "asc") String sortOrder) {
         return salesService.getSale(page, sortColumn, sortOrder);
     }
 
-    @GetMapping("/{id}")
-    public Sale getSaleByID(@PathVariable Long id) {
-        return salesService.getSaleByID(id);
+    @GetMapping("/getPerId")
+    public Map<String, Object> getSaleByClient(
+            @RequestParam String serch,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "cliente_cnpj") String sortColumn,
+            @RequestParam(defaultValue = "DESC") String sortOrder) {
+        return salesService.getSaleByClient(serch, page, sortColumn, sortOrder);
     }
-    
+
     @GetMapping("/status")
     public StatusVenda[] returnAllStatusSale() {
         return salesService.returnAllStatusSale();

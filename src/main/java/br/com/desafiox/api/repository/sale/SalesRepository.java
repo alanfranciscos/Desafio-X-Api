@@ -24,4 +24,11 @@ public interface SalesRepository extends JpaRepository<Sale, Long> {
             "WHERE c.cnpj = :cliente",
             nativeQuery = true)
     List<Sale> deleteAllSalesOfAnClient(@Param("cliente") String cliente);
+
+    @Query(value = "SELECT COUNT(*) FROM vendas v " +
+            "INNER JOIN cliente c " +
+            "ON v.cliente_cnpj = c.cnpj " +
+            "where c.nome = :client",
+            nativeQuery = true)
+    int getTableLength(@Param("client") String client);
 }

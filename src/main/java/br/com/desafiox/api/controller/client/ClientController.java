@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -33,10 +35,17 @@ public class ClientController {
         this.ibgeService = ibgeService;
     }
 
+
     @PostMapping
     public ResponseEntity<Client> createClient(@RequestBody Client client) {
         //Verifica se o usuário com o cnpj já foi cadastrado (validação extra)
         if (getClientById(client.getCnpj()) == null) {
+            String formatedId = client.getCnpj().replaceAll(
+                    "^(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})$",
+                    "$1.$2.$3/$4-$5"
+            );
+            client.setCnpj(formatedId);
+
             for (State s : ibgeService.getStates()) {
                 if (client.getEstado().equals(s.getId())) {
                     return ResponseEntity.ok(clientService.createClient(client));
@@ -67,6 +76,11 @@ public class ClientController {
         return clientService.getClientById(formatedId);
     }
 
+    @GetMapping("/get-cnpj-and-names")
+    public List<HashMap<String, String>> getCnpjAndNames() {
+        return clientService.getCnpjAndNames();
+    }
+
     @PutMapping("/{id}")
     public Client updateClient(@PathVariable String id, @RequestBody Client client) {
         String formatedId = id.replaceAll(
@@ -76,14 +90,15 @@ public class ClientController {
         return clientService.updateClient(formatedId, client);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     @Transactional
-    public ResponseEntity<Client> deleteClient(@PathVariable String id) {
-        if (getClientById(id) != null) {
-            String formatedId = id.replaceAll(
-                    "^(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})$",
-                    "$1.$2.$3/$4-$5"
-            );
+    public ResponseEntity<Client> deleteClient(@RequestParam String id) {
+        String formatedId = id.replaceAll(
+                "^(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})$",
+                "$1.$2.$3/$4-$5"
+        );
+        if (getClientById(formatedId) != null) {
+            System.out.println("Aq");
             salesRepository.deleteAllSalesOfAnClient(formatedId);
             clientService.deleteClient(formatedId);
             return ResponseEntity.ok().build();

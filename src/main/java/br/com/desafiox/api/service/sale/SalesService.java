@@ -49,7 +49,7 @@ public class SalesService {
         //Como o cnpj esta como chave primaria e desejamos ordenar pelo nome, pegamos apenas a coluna nome
         String sortColumnFormated = sortColumn.toLowerCase();
         if (sortColumnFormated.equals("cliente")) {
-            sortColumnFormated = "cliente_cnpj.nome";
+            sortColumnFormated = "nome";
         }
 
         List<Sale> pageableSales = new ArrayList<>();
@@ -60,7 +60,7 @@ public class SalesService {
                 "SELECT id, data, status, valor, nome, cnpj, email, telefone, estado, location " +
                         "FROM vendas v INNER JOIN cliente c " +
                         "ON v.cliente_cnpj = c.cnpj " +
-                        "WHERE c.nome = '" + search + "' " +
+                        "WHERE c.nome LIKE '%" + search + "%' " +
                         "ORDER BY " + sortColumnFormated + " " + sortOrder + " " +
                         "LIMIT 10 OFFSET " + page
         );
@@ -127,7 +127,15 @@ public class SalesService {
     }
 
 
-    public StatusVenda[] returnAllStatusSale() {
-        return StatusVenda.values();
+    public List<HashMap<String, String>> returnAllStatusSale() {
+        List<HashMap<String, String>> result = new ArrayList<>();
+        for (StatusVenda s : StatusVenda.values()) {
+            HashMap<String, String> variable = new HashMap<>();
+            variable.put("label", String.valueOf(s).replaceAll("_", " "));
+            variable.put("value", String.valueOf(s));
+            result.add(variable);
+        }
+
+        return result;
     }
 }

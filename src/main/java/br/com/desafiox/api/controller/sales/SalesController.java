@@ -2,7 +2,6 @@ package br.com.desafiox.api.controller.sales;
 
 
 import br.com.desafiox.api.model.sale.Sale;
-import br.com.desafiox.api.model.sale.StatusVenda;
 import br.com.desafiox.api.repository.sale.SalesRepository;
 import br.com.desafiox.api.service.sale.SalesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
@@ -33,15 +34,15 @@ public class SalesController {
 
     @GetMapping("/getPerId")
     public Map<String, Object> getSaleByClient(
-            @RequestParam String serch,
+            @RequestParam String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "cliente_cnpj") String sortColumn,
             @RequestParam(defaultValue = "DESC") String sortOrder) {
-        return salesService.getSaleByClient(serch, page, sortColumn, sortOrder);
+        return salesService.getSaleByClient(search, page, sortColumn, sortOrder);
     }
 
     @GetMapping("/status")
-    public StatusVenda[] returnAllStatusSale() {
+    public List<HashMap<String, String>> returnAllStatusSale() {
         return salesService.returnAllStatusSale();
     }
 

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -19,6 +21,19 @@ public class ClientService {
     public ClientService(ClientRepository clientRepository, IBGEService ibgeService) {
         this.clientRepository = clientRepository;
         this.ibgeService = ibgeService;
+    }
+
+    public List<HashMap<String, String>> getCnpjAndNames() {
+        List<Client> clients = clientRepository.findAll();
+        List<HashMap<String, String>> result = new ArrayList<>();
+        for (Client c : clients) {
+            HashMap<String, String> variable = new HashMap<>();
+            variable.put("label", c.getNome());
+            variable.put("value", c.getCnpj());
+            result.add(variable);
+        }
+
+        return result;
     }
 
     public Client createClient(Client client) {

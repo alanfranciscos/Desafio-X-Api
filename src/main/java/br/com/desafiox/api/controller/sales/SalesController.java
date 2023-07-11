@@ -41,6 +41,15 @@ public class SalesController {
         return salesService.getSaleByClient(search, page, sortColumn, sortOrder);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Sale> getSalePerID(@PathVariable Long id) {
+        Sale sale = salesService.getSaleByID(id);
+        if (sale != null) {
+            return ResponseEntity.ok(sale);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("/status")
     public List<HashMap<String, String>> returnAllStatusSale() {
         return salesService.returnAllStatusSale();
@@ -52,8 +61,8 @@ public class SalesController {
         return ResponseEntity.ok(salesService.createSale(sale));
     }
 
-    @PutMapping
-    public Sale editSale(Long id, Sale sale) {
+    @PutMapping("/{id}")
+    public Sale editSale(@PathVariable Long id, @RequestBody Sale sale) {
         return salesService.editSale(id, sale);
     }
 

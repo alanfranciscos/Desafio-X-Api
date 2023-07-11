@@ -42,6 +42,10 @@ public class SalesService {
         return salesRepository.findAll(pageRequest);
     }
 
+    public Sale getSaleByID(Long id) {
+        return salesRepository.findSaleById(id);
+    }
+
 
     public Map<String, Object> getSaleByClient(String search, int page, String sortColumn, String sortOrder) {
         Map<String, Object> returnList = new HashMap<>();
@@ -116,6 +120,7 @@ public class SalesService {
             existingSale.setData(sale.getData());
             existingSale.setValor(sale.getValor());
             existingSale.setData(sale.getData());
+            existingSale.setStatus(sale.getStatus());
             return salesRepository.save(existingSale);
         }
         return null;

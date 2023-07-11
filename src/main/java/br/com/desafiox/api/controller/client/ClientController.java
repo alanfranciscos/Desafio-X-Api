@@ -98,7 +98,6 @@ public class ClientController {
                 "$1.$2.$3/$4-$5"
         );
         if (getClientById(formatedId) != null) {
-            System.out.println("Aq");
             salesRepository.deleteAllSalesOfAnClient(formatedId);
             clientService.deleteClient(formatedId);
             return ResponseEntity.ok().build();

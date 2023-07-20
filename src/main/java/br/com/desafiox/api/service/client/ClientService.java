@@ -3,6 +3,7 @@ package br.com.desafiox.api.service.client;
 import br.com.desafiox.api.model.client.Client;
 import br.com.desafiox.api.repository.client.ClientRepository;
 import br.com.desafiox.api.service.ibge.IBGEService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ClientService {
@@ -66,4 +68,29 @@ public class ClientService {
     public void deleteClient(String id) {
         clientRepository.deleteClientById(id);
     }
+
+    /**
+     * @param search     parametro utilizado para procurar tanto pelo nome do cliente, quanto pelo cnpj
+     * @param page       parametro para acessar a pagina
+     * @param sortColumn A coluna pela qual esta se ordenando os dados
+     * @param sortOrder  DESC OU ASC (decrescente ou crescente) referente a coluna ordenada
+     * @return retorna um objeto no qual é possível acessar tabto os dados em questão, quanto o numero de elementos e paginas
+     */
+    public Map<String, Object> getClientByNameOrCnpj(@NotNull String search,
+                                                     @NotNull int page,
+                                                     @NotNull String sortColumn,
+                                                     @NotNull String sortOrder) {
+        Map<String, Object> returnList = new HashMap<>();
+        List<Client> itens = clientRepository.getClientByNameOrCnpj(search, sortColumn, sortOrder.toUpperCase(), page);
+
+        int lengthItens = itens.size();
+        int totalPages = (lengthItens / 10) + 1;
+
+        returnList.put("content", itens);
+        returnList.put("totalElements", lengthItens);
+        returnList.put("totalPages", totalPages);
+
+        return returnList;
+    }
+
 }

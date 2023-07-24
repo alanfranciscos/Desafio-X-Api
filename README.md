@@ -7,7 +7,7 @@
 
 # Sobre o banco de dados
 - É necessário ter o postgrees na versão 14 instalado.
-- É necessário que tenha o geometries instalado.
+- É necessário que tenha o postgis instalado.
 
 # Sobre a instalação
 - É necesário abrir o programa em um editor de texto(Indico intellij para backend em java)

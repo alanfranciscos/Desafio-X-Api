@@ -1,6 +1,22 @@
 # Desafio-X-Api
 
+# Bibliotecas utilizadas
+- Lombok
+- Flyway Core
+- PostgreSQL JDBC Drive
 
+# Sobre o banco de dados
+- É necessário ter o postgrees na versão 14 instalado.
+- É necessário que tenha o geometries instalado.
+
+# Sobre a instalação
+- É necesário abrir o programa em um editor de texto(Indico intellij para backend em java)
+- Espere carregar as pedendcias contidas no arquivo pom.xml (Maven)
+- Configure seu banco de dados como descrito no arquivo de configuração ou altere o mesmo.
+- De o "Run" no arquivo ApiApplication.java
+
+
+# Possíveis problemas na API
 Pode ser que talvez você tenha problemas ao rodar a api devido a um problema de certificado. Para solucioná-lo, siga os seguintes passos:
 
 - Certifique de ter configurado a variael de ambiente do java;
